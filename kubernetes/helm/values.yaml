@@ -1,0 +1,146 @@
+# Prowler CNAPP Helm Chart Values
+# Production deployment configuration
+
+replicaCount:
+  api: 2
+  worker: 3
+  workerBeat: 1
+  ui: 2
+
+image:
+  api:
+    repository: prowler-cnapp/api
+    tag: latest
+    pullPolicy: IfNotPresent
+  worker:
+    repository: prowler-cnapp/api
+    tag: latest
+  ui:
+    repository: prowler-cnapp/ui
+    tag: latest
+
+resources:
+  api:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  worker:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  ui:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+autoscaling:
+  worker:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
+
+postgresql:
+  enabled: true
+  auth:
+    database: prowler
+    username: prowler
+    existingSecret: prowler-db-secret
+  primary:
+    persistence:
+      size: 50Gi
+
+valkey:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: prowler-valkey-secret
+
+neo4j:
+  enabled: true
+  neo4j:
+    password: ""
+    existingSecret: prowler-neo4j-secret
+  volumes:
+    data:
+      size: 20Gi
+
+# CNAPP-specific configuration
+cnapp:
+  # CWPP Scanner
+  cwpp:
+    enabled: true
+    scanSchedule: "0 2 * * *"  # Daily at 2 AM
+    trivyImage: aquasec/trivy:latest
+    maxConcurrentScans: 5
+
+  # CIEM
+  ciem:
+    enabled: true
+    cloudtrailLookbackDays: 90
+    analysisSchedule: "0 4 * * 0"  # Weekly Sunday 4 AM
+
+  # DSPM
+  dspm:
+    enabled: true
+    sampleSize: 10
+    maxObjectSize: 10485760  # 10MB
+    scanSchedule: "0 3 * * 0"  # Weekly Sunday 3 AM
+
+  # CDR
+  cdr:
+    enabled: true
+    eventSources:
+      aws:
+        sqsQueueUrl: ""
+      azure:
+        eventHubConnectionString: ""
+      gcp:
+        pubsubSubscription: ""
+
+  # Integrations
+  integrations:
+    slack:
+      enabled: false
+      webhookUrl: ""
+    pagerduty:
+      enabled: false
+      routingKey: ""
+    jira:
+      enabled: false
+      baseUrl: ""
+      projectKey: ""
+      existingSecret: prowler-jira-secret
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: prowler.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: prowler-tls
+      hosts:
+        - prowler.example.com
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+  grafanaDashboard:
+    enabled: true

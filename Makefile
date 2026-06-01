@@ -56,3 +56,29 @@ run-api-dev: ## Start development environment with API, PostgreSQL, Valkey, MCP,
 
 ##@ Development Environment
 build-and-run-api-dev: build-no-cache-dev run-api-dev
+
+##@ CNAPP Development
+cnapp-up: ## Start full CNAPP stack (API + Workers + Scanner + Monitoring)
+	docker compose -f docker-compose.yml -f docker-compose-cnapp.yml up -d
+
+cnapp-down: ## Stop CNAPP stack
+	docker compose -f docker-compose.yml -f docker-compose-cnapp.yml down
+
+cnapp-logs: ## View CNAPP scanner worker logs
+	docker compose -f docker-compose.yml -f docker-compose-cnapp.yml logs -f scanner-worker cdr-worker
+
+cnapp-test: ## Run CNAPP unit tests
+	cd api && uv run pytest ../tests/cnapp/ -v
+
+cnapp-lint: ## Lint CNAPP modules
+	ruff check api/src/backend/api/attack_paths/ api/src/backend/api/cwpp/ api/src/backend/api/ciem/ api/src/backend/api/dspm/ api/src/backend/api/cdr/ api/src/backend/tasks/jobs/cwpp/ api/src/backend/tasks/jobs/ciem/ api/src/backend/tasks/jobs/dspm/ api/src/backend/tasks/jobs/cdr/ api/src/backend/tasks/jobs/integrations/
+
+##@ CNAPP Deployment
+cnapp-deploy: ## Deploy to Kubernetes via Helm
+	./deploy.sh
+
+cnapp-helm-template: ## Render Helm templates (dry-run)
+	helm template prowler-cnapp ./kubernetes/helm
+
+cnapp-helm-lint: ## Lint Helm chart
+	helm lint ./kubernetes/helm

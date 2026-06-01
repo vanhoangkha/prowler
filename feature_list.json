@@ -1,0 +1,217 @@
+{
+  "project": "prowler-cnapp",
+  "description": "Cloud-Native Application Protection Platform based on Prowler OSS",
+  "last_updated": "2026-06-01",
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Foundation & Setup",
+      "timeline": "Week 1-4",
+      "features": [
+        {
+          "id": "F001",
+          "name": "Local full-stack environment",
+          "description": "UI + API + Worker + PostgreSQL + Valkey + Neo4j running locally",
+          "status": "done",
+          "definition_of_done": "docker compose up starts all services, UI accessible at localhost"
+        },
+        {
+          "id": "F002",
+          "name": "CI/CD pipeline for fork",
+          "description": "GitHub Actions for lint, test, build",
+          "status": "done",
+          "definition_of_done": "Push to branch triggers lint+test, PR gates pass"
+        },
+        {
+          "id": "F003",
+          "name": "AWS scan end-to-end",
+          "description": "Scan AWS account, view results in UI and Neo4j graph",
+          "status": "done",
+          "definition_of_done": "Scan completes, findings visible in UI, attack paths in Neo4j"
+        }
+      ]
+    },
+    {
+      "id": "phase-1",
+      "name": "Security Graph & Attack Paths",
+      "timeline": "Month 2-4",
+      "features": [
+        {
+          "id": "F010",
+          "name": "Multi-cloud graph ingestion (Azure)",
+          "description": "Extend Cartography ingestion for Azure resources",
+          "status": "in-progress",
+          "definition_of_done": "Azure resources appear as nodes in Neo4j graph after scan"
+        },
+        {
+          "id": "F011",
+          "name": "Multi-cloud graph ingestion (GCP)",
+          "description": "Extend Cartography ingestion for GCP resources",
+          "status": "in-progress",
+          "definition_of_done": "GCP resources appear as nodes in Neo4j graph after scan"
+        },
+        {
+          "id": "F012",
+          "name": "Toxic combination detection",
+          "description": "Attack path patterns: public+vulnerable+high-priv, lateral movement, data exfil",
+          "status": "in-progress",
+          "definition_of_done": "Cypher queries detect top-10 attack patterns, scored by risk"
+        },
+        {
+          "id": "F013",
+          "name": "Graph visualization UI",
+          "description": "Interactive graph explorer with attack path step-by-step",
+          "status": "in-progress",
+          "definition_of_done": "React Flow/Cytoscape renders graph, click-through attack paths"
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Agentless Workload Protection (CWPP)",
+      "timeline": "Month 4-7",
+      "features": [
+        {
+          "id": "F020",
+          "name": "Agentless VM scanning (AWS)",
+          "description": "EBS snapshot → mount → scan filesystem for vulns, secrets, malware",
+          "status": "in-progress",
+          "definition_of_done": "EC2 instances scanned without agent, CVEs reported in findings"
+        },
+        {
+          "id": "F021",
+          "name": "Agentless VM scanning (Azure/GCP)",
+          "description": "Disk snapshot scan for Azure VMs and GCE instances",
+          "status": "not-started",
+          "definition_of_done": "Azure/GCP VMs scanned, findings in graph"
+        },
+        {
+          "id": "F022",
+          "name": "Container image scanning",
+          "description": "Scan ECR/ACR/GCR images + running containers in EKS/AKS/GKE",
+          "status": "not-started",
+          "definition_of_done": "SBOM generated, vulnerabilities mapped to graph nodes"
+        },
+        {
+          "id": "F023",
+          "name": "Incremental & parallel scanning",
+          "description": "Only scan changes, parallel Celery workers, scheduling",
+          "status": "not-started",
+          "definition_of_done": "Re-scan takes <30% time of full scan, configurable schedule"
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "CIEM - Cloud Identity Intelligence",
+      "timeline": "Month 5-8",
+      "features": [
+        {
+          "id": "F030",
+          "name": "Effective permission analysis",
+          "description": "Parse IAM/RBAC policies across AWS/Azure/GCP, compute effective perms",
+          "status": "in-progress",
+          "definition_of_done": "API returns effective permissions per identity with policy chain"
+        },
+        {
+          "id": "F031",
+          "name": "Over-privileged identity detection",
+          "description": "Compare granted vs used permissions via CloudTrail/activity logs",
+          "status": "not-started",
+          "definition_of_done": "Dashboard shows over-privileged identities with recommendations"
+        },
+        {
+          "id": "F032",
+          "name": "Privilege escalation paths",
+          "description": "Graph-based detection of priv-esc chains",
+          "status": "not-started",
+          "definition_of_done": "Cypher queries find escalation paths, visualized in graph UI"
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "DSPM - Data Security Posture",
+      "timeline": "Month 7-10",
+      "features": [
+        {
+          "id": "F040",
+          "name": "Data discovery & classification",
+          "description": "Scan S3/Blob/GCS for PII/PHI/PCI via sampling",
+          "status": "in-progress",
+          "definition_of_done": "Data stores classified with sensitivity labels in inventory"
+        },
+        {
+          "id": "F041",
+          "name": "Data risk analysis",
+          "description": "Public stores with sensitive data, unencrypted, over-permissioned access",
+          "status": "not-started",
+          "definition_of_done": "Alerts fire for exposed sensitive data, paths in graph"
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Runtime Protection & CDR",
+      "timeline": "Month 9-12",
+      "features": [
+        {
+          "id": "F050",
+          "name": "Cloud event ingestion",
+          "description": "Real-time CloudTrail/Activity Log/Audit Log via EventBridge/SQS/PubSub",
+          "status": "in-progress",
+          "definition_of_done": "Events ingested within 5min of occurrence, stored for query"
+        },
+        {
+          "id": "F051",
+          "name": "Detection rules engine",
+          "description": "SIGMA-like rules for credential compromise, priv-esc, exfil, cryptomining",
+          "status": "in-progress",
+          "definition_of_done": "Built-in rules trigger alerts, custom rules via UI"
+        },
+        {
+          "id": "F052",
+          "name": "Alert routing & response",
+          "description": "Slack/PagerDuty/webhook alerts, correlation, automated playbooks",
+          "status": "not-started",
+          "definition_of_done": "Alerts delivered to configured channels within 1min of detection"
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "Platform & Commercialization",
+      "timeline": "Month 10-18",
+      "features": [
+        {
+          "id": "F060",
+          "name": "Multi-tenancy hardening",
+          "description": "RLS isolation, per-tenant Neo4j, quotas, rate limiting",
+          "status": "not-started",
+          "definition_of_done": "Tenant A cannot access Tenant B data under any API call"
+        },
+        {
+          "id": "F061",
+          "name": "Enterprise auth (SSO/SAML/OIDC)",
+          "description": "SSO login, RBAC roles, audit logging, API keys",
+          "status": "not-started",
+          "definition_of_done": "SAML IdP login works, roles enforced, audit trail complete"
+        },
+        {
+          "id": "F062",
+          "name": "Production Kubernetes deployment",
+          "description": "Helm chart, auto-scaling workers, monitoring, DR",
+          "status": "not-started",
+          "definition_of_done": "Helm install deploys full stack, scales under load"
+        },
+        {
+          "id": "F063",
+          "name": "Integrations (Jira/SIEM/CI-CD)",
+          "description": "Ticket creation, SIEM export, deployment blocking",
+          "status": "in-progress",
+          "definition_of_done": "Critical finding creates Jira ticket and blocks CI pipeline"
+        }
+      ]
+    }
+  ]
+}

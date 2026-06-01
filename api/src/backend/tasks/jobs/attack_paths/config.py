@@ -3,7 +3,7 @@ from typing import Callable
 from uuid import UUID
 
 from config.env import env
-from tasks.jobs.attack_paths import aws
+from tasks.jobs.attack_paths import aws, azure, gcp
 
 # Batch size for Neo4j write operations (resource labeling, cleanup)
 BATCH_SIZE = env.int("ATTACK_PATHS_BATCH_SIZE", 1000)
@@ -53,8 +53,28 @@ AWS_CONFIG = ProviderConfig(
     short_uid_extractor=aws.extract_short_uid,
 )
 
+AZURE_CONFIG = ProviderConfig(
+    name="azure",
+    root_node_label="AzureTenant",
+    uid_field="id",
+    resource_label="_AzureResource",
+    ingestion_function=azure.start_azure_ingestion,
+    short_uid_extractor=azure.extract_short_uid,
+)
+
+GCP_CONFIG = ProviderConfig(
+    name="gcp",
+    root_node_label="GCPProject",
+    uid_field="id",
+    resource_label="_GCPResource",
+    ingestion_function=gcp.start_gcp_ingestion,
+    short_uid_extractor=gcp.extract_short_uid,
+)
+
 PROVIDER_CONFIGS: dict[str, ProviderConfig] = {
     "aws": AWS_CONFIG,
+    "azure": AZURE_CONFIG,
+    "gcp": GCP_CONFIG,
 }
 
 # Labels added by Prowler that should be filtered from API responses

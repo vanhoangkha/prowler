@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prowler.fullname" . }}-worker-beat
+  labels:
+    {{- include "prowler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker-beat
+  template:
+    metadata:
+      labels:
+        {{- include "prowler.labels" . | nindent 8 }}
+        app.kubernetes.io/component: worker-beat
+    spec:
+      containers:
+        - name: beat
+          image: "{{ .Values.image.worker.repository }}:{{ .Values.image.worker.tag }}"
+          command: ["celery", "-A", "config.celery", "beat", "-l", "info"]
+          envFrom:
+            - secretRef:
+                name: {{ include "prowler.fullname" . }}-env
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

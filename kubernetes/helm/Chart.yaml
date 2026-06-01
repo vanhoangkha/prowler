@@ -1,0 +1,25 @@
+apiVersion: v2
+name: prowler-cnapp
+description: Cloud-Native Application Protection Platform based on Prowler
+type: application
+version: 0.1.0
+appVersion: "5.29.0"
+keywords:
+  - security
+  - cnapp
+  - cspm
+  - cwpp
+  - ciem
+maintainers:
+  - name: CloudSecOps
+home: https://github.com/prowler-cloud/prowler
+# dependencies managed externally - uncomment for helm dependency build
+# dependencies:
+#   - name: postgresql
+#     version: "15.x.x"
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: postgresql.enabled
+#   - name: valkey
+#     version: "1.x.x"
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: valkey.enabled

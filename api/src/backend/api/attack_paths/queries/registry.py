@@ -1,10 +1,14 @@
 from api.attack_paths.queries.types import AttackPathsQueryDefinition
 from api.attack_paths.queries.aws import AWS_QUERIES
+from api.attack_paths.queries.azure import AZURE_QUERIES
+from api.attack_paths.queries.gcp import GCP_QUERIES
 
 
 # Query definitions organized by provider
 _QUERY_DEFINITIONS: dict[str, list[AttackPathsQueryDefinition]] = {
     "aws": AWS_QUERIES,
+    "azure": AZURE_QUERIES,
+    "gcp": GCP_QUERIES,
 }
 
 # Flat lookup by query ID for O(1) access

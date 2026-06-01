@@ -1,0 +1,11 @@
+project_name       = "prowler-cnapp"
+aws_region         = "ap-southeast-1"
+db_password        = "CHANGE_ME_STRONG_PASSWORD"
+allowed_cidr_blocks = ["0.0.0.0/0"]  # Restrict in production
+
+tags = {
+  Project     = "prowler-cnapp"
+  Environment = "production"
+  ManagedBy   = "terraform"
+  Team        = "cloudsecops"
+}

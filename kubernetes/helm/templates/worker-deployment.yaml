@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prowler.fullname" . }}-worker
+  labels:
+    {{- include "prowler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.replicaCount.worker }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        {{- include "prowler.labels" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.image.worker.repository }}:{{ .Values.image.worker.tag }}"
+          command: ["celery", "-A", "config.celery", "worker", "-l", "info", "-Q", "default,scanner"]
+          envFrom:
+            - secretRef:
+                name: {{ include "prowler.fullname" . }}-env
+          resources:
+            {{- toYaml .Values.resources.worker | nindent 12 }}

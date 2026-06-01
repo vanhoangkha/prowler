@@ -13,6 +13,12 @@ from api.ciem.views import (
 )
 from api.dspm.views import data_inventory, trigger_classification_scan, data_risk_findings
 from api.cdr.views import list_alerts, list_detection_rules, acknowledge_alert
+from api.ai.views import (
+    ask_security_question,
+    list_query_templates,
+    generate_fix,
+    list_remediations,
+)
 
 urlpatterns = [
     # Attack Paths & Toxic Combinations
@@ -40,4 +46,10 @@ urlpatterns = [
     path("cdr/alerts/", list_alerts, name="cdr-alerts"),
     path("cdr/rules/", list_detection_rules, name="cdr-rules"),
     path("cdr/alerts/acknowledge/", acknowledge_alert, name="cdr-acknowledge"),
+
+    # AI-Native Security
+    path("ai/ask/", ask_security_question, name="ai-ask"),
+    path("ai/templates/", list_query_templates, name="ai-templates"),
+    path("ai/fix/", generate_fix, name="ai-fix"),
+    path("ai/remediations/", list_remediations, name="ai-remediations"),
 ]
